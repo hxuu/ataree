@@ -1,0 +1,27 @@
+Ataree - eBPF-based Monitoring Tool
+===================================
+
+This is a project that uses a the ebpf virtual machine to hook programs in kernel space to
+common syscalls...etc. These events will be directed to userland for processing using Golang.
+
+Backlog (things we should work on)
+----------------------------------
+
+1.  [x] Initialize Go module and project structure (`cmd/`, `internal/`).
+2.  [x] Add `cilium/ebpf` dependency.
+3.  [ ] Write minimal eBPF C program (tracepoint `sys_enter_execve`).
+4.  [ ] Define shared event struct (C + Go).
+5.  [ ] Compile eBPF program to `.o`.
+6.  [ ] Load eBPF object in Go.
+7.  [ ] Attach program to tracepoint.
+8.  [ ] Create ring buffer reader.
+9.  [ ] Parse events and print PID + command.
+10. [ ] Implement graceful shutdown (SIGINT handling).
+
+That’s Sprint 1. Other stuff would have to wait.
+
+Docs (that's a bonus)
+---------------------
+
+As the project progresses, check the docs for more info: https://hxuu.github.io/ataree/
+
