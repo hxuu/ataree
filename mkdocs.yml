@@ -1,0 +1,30 @@
+site_name: Ataree
+site_description: Runtime security for Linux using eBPF
+site_author: hxuu
+
+repo_name: hxuu/ataree
+repo_url: https://github.com/hxuu/ataree
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+    - pymdownx.highlight
+    - pymdownx.superfences
+    - pymdownx.details
+    - admonition
+    - toc:
+          permalink: true
+
+nav:
+  - Home: index.md
+  # - Architecture: architecture.md
+  # - eBPF Design: ebpf-design.md
+  # - CLI: cli.md
+  # - Roadmap: roadmap.md
+
