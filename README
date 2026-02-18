@@ -1,8 +1,7 @@
 Ataree - eBPF-based Monitoring Tool
 ===================================
 
-This is a project that uses a the ebpf virtual machine to hook programs in kernel space to
-common syscalls...etc. These events will be directed to userland for processing using Golang.
+This is a project that uses a the ebpf virtual machine to hook programs in kernel space to common syscalls...etc. These events will be directed to userland for processing using Golang.
 
 Backlog (things we should work on)
 ----------------------------------
