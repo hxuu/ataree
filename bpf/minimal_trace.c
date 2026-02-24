@@ -1,3 +1,5 @@
+//go:build ignore
+
 #include <linux/bpf.h>
 #include <linux/version.h>
 #include <bpf/bpf_helpers.h>
@@ -8,5 +10,5 @@ int detect_execve () {
   return 0;
 }
 
-char license[] SEC("license") = "GPL";
-int version SEC("version") = LINUX_VERSION_CODE;
+char __license[] SEC("license") = "GPL";
+int __version SEC("version") = LINUX_VERSION_CODE;
