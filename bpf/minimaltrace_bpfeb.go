@@ -12,28 +12,28 @@ import (
 	"github.com/cilium/ebpf"
 )
 
-// loadMinimaltrace returns the embedded CollectionSpec for minimaltrace.
-func loadMinimaltrace() (*ebpf.CollectionSpec, error) {
+// LoadMinimaltrace returns the embedded CollectionSpec for Minimaltrace.
+func LoadMinimaltrace() (*ebpf.CollectionSpec, error) {
 	reader := bytes.NewReader(_MinimaltraceBytes)
 	spec, err := ebpf.LoadCollectionSpecFromReader(reader)
 	if err != nil {
-		return nil, fmt.Errorf("can't load minimaltrace: %w", err)
+		return nil, fmt.Errorf("can't load Minimaltrace: %w", err)
 	}
 
 	return spec, err
 }
 
-// loadMinimaltraceObjects loads minimaltrace and converts it into a struct.
+// LoadMinimaltraceObjects loads Minimaltrace and converts it into a struct.
 //
 // The following types are suitable as obj argument:
 //
-//	*minimaltraceObjects
-//	*minimaltracePrograms
-//	*minimaltraceMaps
+//	*MinimaltraceObjects
+//	*MinimaltracePrograms
+//	*MinimaltraceMaps
 //
 // See ebpf.CollectionSpec.LoadAndAssign documentation for details.
-func loadMinimaltraceObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
-	spec, err := loadMinimaltrace()
+func LoadMinimaltraceObjects(obj interface{}, opts *ebpf.CollectionOptions) error {
+	spec, err := LoadMinimaltrace()
 	if err != nil {
 		return err
 	}
@@ -41,74 +41,74 @@ func loadMinimaltraceObjects(obj interface{}, opts *ebpf.CollectionOptions) erro
 	return spec.LoadAndAssign(obj, opts)
 }
 
-// minimaltraceSpecs contains maps and programs before they are loaded into the kernel.
+// MinimaltraceSpecs contains maps and programs before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
-type minimaltraceSpecs struct {
-	minimaltraceProgramSpecs
-	minimaltraceMapSpecs
-	minimaltraceVariableSpecs
+type MinimaltraceSpecs struct {
+	MinimaltraceProgramSpecs
+	MinimaltraceMapSpecs
+	MinimaltraceVariableSpecs
 }
 
-// minimaltraceProgramSpecs contains programs before they are loaded into the kernel.
+// MinimaltraceProgramSpecs contains programs before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
-type minimaltraceProgramSpecs struct {
+type MinimaltraceProgramSpecs struct {
 	DetectExecve *ebpf.ProgramSpec `ebpf:"detect_execve"`
 }
 
-// minimaltraceMapSpecs contains maps before they are loaded into the kernel.
+// MinimaltraceMapSpecs contains maps before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
-type minimaltraceMapSpecs struct {
+type MinimaltraceMapSpecs struct {
 }
 
-// minimaltraceVariableSpecs contains global variables before they are loaded into the kernel.
+// MinimaltraceVariableSpecs contains global variables before they are loaded into the kernel.
 //
 // It can be passed ebpf.CollectionSpec.Assign.
-type minimaltraceVariableSpecs struct {
+type MinimaltraceVariableSpecs struct {
 }
 
-// minimaltraceObjects contains all objects after they have been loaded into the kernel.
+// MinimaltraceObjects contains all objects after they have been loaded into the kernel.
 //
-// It can be passed to loadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
-type minimaltraceObjects struct {
-	minimaltracePrograms
-	minimaltraceMaps
-	minimaltraceVariables
+// It can be passed to LoadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
+type MinimaltraceObjects struct {
+	MinimaltracePrograms
+	MinimaltraceMaps
+	MinimaltraceVariables
 }
 
-func (o *minimaltraceObjects) Close() error {
+func (o *MinimaltraceObjects) Close() error {
 	return _MinimaltraceClose(
-		&o.minimaltracePrograms,
-		&o.minimaltraceMaps,
+		&o.MinimaltracePrograms,
+		&o.MinimaltraceMaps,
 	)
 }
 
-// minimaltraceMaps contains all maps after they have been loaded into the kernel.
+// MinimaltraceMaps contains all maps after they have been loaded into the kernel.
 //
-// It can be passed to loadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
-type minimaltraceMaps struct {
+// It can be passed to LoadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
+type MinimaltraceMaps struct {
 }
 
-func (m *minimaltraceMaps) Close() error {
+func (m *MinimaltraceMaps) Close() error {
 	return _MinimaltraceClose()
 }
 
-// minimaltraceVariables contains all global variables after they have been loaded into the kernel.
+// MinimaltraceVariables contains all global variables after they have been loaded into the kernel.
 //
-// It can be passed to loadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
-type minimaltraceVariables struct {
+// It can be passed to LoadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
+type MinimaltraceVariables struct {
 }
 
-// minimaltracePrograms contains all programs after they have been loaded into the kernel.
+// MinimaltracePrograms contains all programs after they have been loaded into the kernel.
 //
-// It can be passed to loadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
-type minimaltracePrograms struct {
+// It can be passed to LoadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
+type MinimaltracePrograms struct {
 	DetectExecve *ebpf.Program `ebpf:"detect_execve"`
 }
 
-func (p *minimaltracePrograms) Close() error {
+func (p *MinimaltracePrograms) Close() error {
 	return _MinimaltraceClose(
 		p.DetectExecve,
 	)

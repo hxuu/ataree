@@ -11,7 +11,7 @@ Backlog (things we should work on)
 3.  [x] Write minimal eBPF C program (tracepoint `sys_enter_execve`).
 4.  [ ] Define shared event struct (C + Go).
 5.  [x] Compile eBPF program to `.o`.
-6.  [ ] Load eBPF object in Go.
+6.  [x] Load eBPF object in Go.
 7.  [ ] Attach program to tracepoint.
 8.  [ ] Create ring buffer reader.
 9.  [ ] Parse events and print PID + command.
