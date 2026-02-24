@@ -43,7 +43,7 @@ Run `go build` inside the root project directory to generate the ataree binary.
 Now the eBPF programs should be run as root (or have CAP_BPF), so what is left to do is to run: `sudo ./ataree`.
 
 ### Current Pipeline
-[Pipeline](https://drive.google.com/file/d/1LtubAoQdIPcNLgUN0FKJF_GTzIhzIpC4/view?usp=sharing)
+![Pipeline](pipeline.png)
 
 ### References
 - https://ebpf-go.dev/guides/getting-started/
