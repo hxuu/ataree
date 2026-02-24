@@ -38,7 +38,7 @@ Depending on the environment, here are few notes from the go documentation that 
 ### Loading eBPF objects
 The `main.go` file takes care of the loading process, using the predefined generated functions inside the previously generated `.go` files.
 
-Run `go build` inside the root project directory to generate the ataree binary.
+Run `go build` inside the `./cmd/ataree` directory to generate the ataree binary.
 
 Now the eBPF programs should be run as root (or have CAP_BPF), so what is left to do is to run: `sudo ./ataree`.
 
