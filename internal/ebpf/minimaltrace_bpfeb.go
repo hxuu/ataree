@@ -61,6 +61,7 @@ type MinimaltraceProgramSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type MinimaltraceMapSpecs struct {
+	Events *ebpf.MapSpec `ebpf:"events"`
 }
 
 // MinimaltraceVariableSpecs contains global variables before they are loaded into the kernel.
@@ -89,10 +90,13 @@ func (o *MinimaltraceObjects) Close() error {
 //
 // It can be passed to LoadMinimaltraceObjects or ebpf.CollectionSpec.LoadAndAssign.
 type MinimaltraceMaps struct {
+	Events *ebpf.Map `ebpf:"events"`
 }
 
 func (m *MinimaltraceMaps) Close() error {
-	return _MinimaltraceClose()
+	return _MinimaltraceClose(
+		m.Events,
+	)
 }
 
 // MinimaltraceVariables contains all global variables after they have been loaded into the kernel.
