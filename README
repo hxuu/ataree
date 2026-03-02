@@ -9,13 +9,13 @@ Backlog (things we should work on)
 1.  [x] Initialize Go module and project structure (`cmd/`, `internal/`).
 2.  [x] Add `cilium/ebpf` dependency.
 3.  [x] Write minimal eBPF C program (tracepoint `sys_enter_execve`).
-4.  [ ] Define shared event struct (C + Go).
+4.  [x] Define shared event struct (C + Go).
 5.  [x] Compile eBPF program to `.o`.
 6.  [x] Load eBPF object in Go.
 7.  [x] Attach program to tracepoint.
-8.  [ ] Create ring buffer reader.
-9.  [ ] Parse events and print PID + command.
-10. [ ] Implement graceful shutdown (SIGINT handling).
+8.  [x] Create ring buffer reader.
+9.  [x] Parse events and print PID + command.
+10. [x] Implement graceful shutdown (SIGINT handling).
 
 That’s Sprint 1. Other stuff would have to wait.
 
@@ -23,4 +23,3 @@ Docs (that's a bonus)
 ---------------------
 
 As the project progresses, check the docs for more info: https://hxuu.github.io/ataree/
-
