@@ -12,7 +12,7 @@ Backlog (things we should work on)
 4.  [ ] Define shared event struct (C + Go).
 5.  [x] Compile eBPF program to `.o`.
 6.  [x] Load eBPF object in Go.
-7.  [ ] Attach program to tracepoint.
+7.  [x] Attach program to tracepoint.
 8.  [ ] Create ring buffer reader.
 9.  [ ] Parse events and print PID + command.
 10. [ ] Implement graceful shutdown (SIGINT handling).
