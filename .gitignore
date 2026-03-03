@@ -36,3 +36,6 @@ go.work.sum
 
 # Mkdocs
 site/
+
+# Build
+build/
