@@ -44,5 +44,13 @@ Now the eBPF programs should be run as root (or have CAP_BPF), so what is left t
 ![Pipeline](pipeline.png)
 
 ### References
-- https://ebpf-go.dev/guides/getting-started/
-- https://ebpf.io/what-is-ebpf/#introduction-to-ebpf
+
+- [https://ebpf-go.dev/guides/getting-started/](https://ebpf-go.dev/guides/getting-started/)
+- [https://ebpf.io/what-is-ebpf/#introduction-to-ebpf](https://ebpf.io/what-is-ebpf/#introduction-to-ebpf)
+- [https://pkg.go.dev/go/build#hdr-Build_Constraints](https://pkg.go.dev/go/build#hdr-Build_Constraints)
+- [https://docs.ebpf.io/ebpf-library/libbpf/ebpf/SEC/](https://docs.ebpf.io/ebpf-library/libbpf/ebpf/SEC/)
+- [https://docs.kernel.org/bpf/libbpf/program_types.html#id31](https://docs.kernel.org/bpf/libbpf/program_types.html#id31)
+- [https://man7.org/linux/man-pages/man7/bpf-helpers.7.html](https://man7.org/linux/man-pages/man7/bpf-helpers.7.html)
+- [https://docs.ebpf.io/ebpf-library/libbpf/ebpf/bpf_printk/](https://docs.ebpf.io/ebpf-library/libbpf/ebpf/bpf_printk/)
+- [https://github.com/cilium/ebpf/tree/main/cmd/bpf2go](https://github.com/cilium/ebpf/tree/main/cmd/bpf2go)
+
