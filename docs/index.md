@@ -34,11 +34,19 @@ Depending on the environment, here are few notes from the go documentation that 
 - On Debian, you may also need ln -sf /usr/include/asm-generic/ /usr/include/asm since the example expects to find <asm/types.h>
 
 ### Loading eBPF objects
-The `main.go` file takes care of the loading process, using the predefined generated functions inside the previously generated `.go` files.
+The eBPF loading and attachment logic lives in `internal/ebpf`, which uses the generated functions inside the `.go` files produced by `bpf2go`.
 
 Run `go build` inside the `./cmd/ataree` directory to generate the ataree binary.
 
 Now the eBPF programs should be run as root (or have CAP_BPF), so what is left to do is to run: `sudo ./ataree`.
+
+## Runtime Layout
+
+- `cmd/ataree`: entrypoint binary, delegates to `internal/cli`.
+- `internal/cli`: startup, signal handling, and wiring.
+- `internal/ebpf`: load/attach, ring buffer reader, lifecycle.
+- `internal/pipeline`: reads ring buffer records and decodes events.
+- `internal/printer`: formats output (stdout today).
 
 ### Current Pipeline
 ![Pipeline](pipeline.png)
@@ -53,4 +61,3 @@ Now the eBPF programs should be run as root (or have CAP_BPF), so what is left t
 - [https://man7.org/linux/man-pages/man7/bpf-helpers.7.html](https://man7.org/linux/man-pages/man7/bpf-helpers.7.html)
 - [https://docs.ebpf.io/ebpf-library/libbpf/ebpf/bpf_printk/](https://docs.ebpf.io/ebpf-library/libbpf/ebpf/bpf_printk/)
 - [https://github.com/cilium/ebpf/tree/main/cmd/bpf2go](https://github.com/cilium/ebpf/tree/main/cmd/bpf2go)
-
