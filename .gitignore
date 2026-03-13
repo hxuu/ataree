@@ -39,3 +39,6 @@ site/
 
 # Build
 build/
+rbtest
+bpf/ataree_*.go
+bpf/ataree_*.o
