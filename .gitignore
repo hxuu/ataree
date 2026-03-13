@@ -28,7 +28,7 @@ go.work.sum
 .env
 
 # BPF objects
-# *.o
+*.o
 
 # Editor/IDE
 .idea/

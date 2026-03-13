@@ -21,9 +21,7 @@ to user space for inspection, filtering, and analysis.
 The go.mod and go.sum files define all needed dependencies and used tools needed for this project, similar to how requirements.txt worksin regular projects.
 
 ### Compiling eBPF program to .o
-`bpf2go` go library is used for that, gen.go file takes care of compiling eBPF and producing `.o` kernel objects and their corresponding Go source files, this generation is done by running `go generate` inside `./bpf`.
-
-P.S: All generated `.o` and `.go` files are checked into source control, so there is no need to regenerate them unless changes to the `.c` files are made.
+`bpf2go` go library is used for that, gen.go file takes care of compiling eBPF and producing `.o` kernel objects and their corresponding Go source files, this generation is done by running `go generate` inside `./internal/ebpf`.
 
 #### Generation Notes
 Depending on the environment, here are few notes from the go documentation that might help if any problems are faced:
