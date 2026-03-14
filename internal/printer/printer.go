@@ -8,19 +8,26 @@ import (
 )
 
 type Printer interface {
-	Print(event ebpf.Event)
+	Print(event ebpf.RawEvent)
 }
 
 type Stdout struct{}
 
-func (Stdout) Print(event ebpf.Event) {
-	fmt.Printf("pid=%d command=%s\n", event.Pid, cString(event.Command[:]))
+func (Stdout) Print(event ebpf.RawEvent) {
+	fmt.Printf("pid=%d comm=%s filename=%s event=%d arg1=%#x arg2=%#x\n",
+		event.PID,
+		cString(event.Comm[:]),
+		cString(event.Filename[:]),
+		event.EventType,
+		event.Arg1,
+		event.Arg2,
+	)
 }
 
 func cString(buf []byte) string {
-	idx := bytes.IndexByte(buf, 0)
-	if idx == -1 {
+	before, _, ok := bytes.Cut(buf, []byte{0})
+	if !ok {
 		return string(buf)
 	}
-	return string(buf[:idx])
+	return string(before)
 }

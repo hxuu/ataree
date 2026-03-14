@@ -1,4 +1,4 @@
-package detection
+package ebpf
 
 // Mirror of events.h for Go side.
 type EventType uint8
@@ -35,4 +35,5 @@ type Alert struct {
     Evidence   []RawEvent
     Message    string
 }
+
 

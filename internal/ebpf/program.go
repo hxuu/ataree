@@ -8,7 +8,7 @@ import (
 	cilium "github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
 	"github.com/cilium/ebpf/ringbuf"
-	"github.com/hxuu/ataree/bpf"
+	bpf "github.com/hxuu/ataree/ebpf"
 )
 
 type Program struct {

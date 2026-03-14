@@ -30,7 +30,7 @@ func Run(program *ebpf.Program, out printer.Printer) error {
 			continue
 		}
 
-		var evt ebpf.Event
+		var evt ebpf.RawEvent
 		if err := binary.Read(bytes.NewReader(record.RawSample), binary.LittleEndian, &evt); err != nil {
 			fmt.Printf("error parsing event: %v\n", err)
 			continue

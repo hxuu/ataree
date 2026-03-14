@@ -5,7 +5,7 @@
 #include <linux/types.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
-#include "../detection/events.h"
+#include "events.h"
 
 struct proc_info { __u32 ppid; };
 struct trace_entry { unsigned short type; unsigned char flags; unsigned char preempt_count; int pid; };
