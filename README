@@ -1,25 +1,33 @@
 Ataree - eBPF-based Monitoring Tool
 ===================================
 
-This is a project that uses a the ebpf virtual machine to hook programs in kernel space to common syscalls...etc. These events will be directed to userland for processing using Golang.
+Overview
+--------
+Ataree loads a small eBPF program that hooks ptrace/openat/mmap/mprotect and sched fork/exit tracepoints, streams ringbuf events to userland, and runs lightweight Go detectors to raise alerts for process-injection behavior.
 
-Backlog (things we should work on)
-----------------------------------
+Current Features
+----------------
+- eBPF loader/attacher using cilium/ebpf (tracepoints: ptrace, openat, mmap, mprotect, sched fork/exit).
+- Ring buffer reader -> RawEvent decoder -> detector fan-out -> stdout alerts.
+- Graceful shutdown on SIGINT/SIGTERM.
 
-1.  [x] Initialize Go module and project structure (`cmd/`, `internal/`).
-2.  [x] Add `cilium/ebpf` dependency.
-3.  [x] Write minimal eBPF C program (tracepoint `sys_enter_execve`).
-4.  [x] Define shared event struct (C + Go).
-5.  [x] Compile eBPF program to `.o`.
-6.  [x] Load eBPF object in Go.
-7.  [x] Attach program to tracepoint.
-8.  [x] Create ring buffer reader.
-9.  [x] Parse events and print PID + command.
-10. [x] Implement graceful shutdown (SIGINT handling).
+Detectors
+---------
+- ptrace-write: alert on PTRACE_POKETEXT/POKEDATA.
+- ptrace-setregs: alert on PTRACE_SETREGS hijack attempts.
+- ptrace->mprotect: correlate ptrace activity followed by mprotect(PROT_EXEC) within 5s.
+- proc-maps-mem: correlate /proc/<pid>/maps then /proc/<pid>/mem within 5s.
+- anon-exec-mmap: alert on MAP_ANONYMOUS | PROT_EXEC mappings.
 
-That’s Sprint 1. Other stuff would have to wait.
+Build & Run
+-----------
+- Build eBPF object: `make` (or use prebuilt under ebpf/).
+- Build/runtime: `go build ./cmd/ataree` or run `./build/ataree`.
 
-Docs (that's a bonus)
----------------------
+PoC Suite
+---------
+Process-injection PoCs live under `poc_malware/` (T1055 sub-techniques) for manual validation.
 
-As the project progresses, check the docs for more info: https://hxuu.github.io/ataree/
+Docs
+----
+More detail in `docs/` and the site: https://hxuu.github.io/ataree/
