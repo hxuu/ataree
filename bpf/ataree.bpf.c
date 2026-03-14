@@ -61,6 +61,7 @@ static __always_inline void submit_common(__u8 evtype, __u32 target, struct trac
 {
     struct t1055_event *e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
     if (!e) return;
+    __builtin_memset(e, 0, sizeof(*e)); // zero out rb before filling it up
     __u32 pid = bpf_get_current_pid_tgid();
     e->timestamp_ns = bpf_ktime_get_ns();
     e->pid = pid;
@@ -96,9 +97,9 @@ int on_ptrace(struct trace_event_raw_sys_enter *ctx)
 {
     __u64 req = ctx->args[0];
     if (req == 4 || req == 5) { // POKETEXT/POKEDATA
-        submit_common(EVENT_PTRACE_WRITE, (__u32)ctx->args[0], ctx);
+        submit_common(EVENT_PTRACE_WRITE, (__u32)ctx->args[1], ctx);
     } else if (req == 13) { // SETREGS
-        submit_common(EVENT_PTRACE_SETREGS, (__u32)ctx->args[0], ctx);
+        submit_common(EVENT_PTRACE_SETREGS, (__u32)ctx->args[1], ctx);
     }
     return 0;
 }
@@ -135,6 +136,7 @@ int on_openat(struct trace_event_raw_sys_enter *ctx)
 
     struct t1055_event *e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
     if (!e) return 0;
+    __builtin_memset(e, 0, sizeof(*e));
 
     __u32 pid = bpf_get_current_pid_tgid();
     e->timestamp_ns = bpf_ktime_get_ns();
@@ -157,7 +159,7 @@ int on_mmap(struct trace_event_raw_sys_enter *ctx)
     __u64 prot = ctx->args[2];
     __u64 flags = ctx->args[3];
     if ((flags & 0x20 /*MAP_ANONYMOUS*/) && (prot & 0x4 /*PROT_EXEC*/)) {
-        submit_common(EVENT_ANON_EXEC_MMAP, 0, ctx);
+        submit_common(EVENT_ANON_EXEC_MMAP, bpf_get_current_pid_tgid(), ctx);
     }
     return 0;
 }
@@ -167,7 +169,7 @@ int on_mprotect(struct trace_event_raw_sys_enter *ctx)
 {
     __u64 prot = ctx->args[2];
     if (prot & 0x4 /*PROT_EXEC*/) {
-        submit_common(EVENT_MPROTECT_EXEC, 0, ctx);
+        submit_common(EVENT_MPROTECT_EXEC, bpf_get_current_pid_tgid(), ctx);
     }
     return 0;
 }
