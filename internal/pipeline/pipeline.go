@@ -7,11 +7,12 @@ import (
 	"fmt"
 
 	"github.com/cilium/ebpf/ringbuf"
+	"github.com/hxuu/ataree/internal/detector"
 	"github.com/hxuu/ataree/internal/ebpf"
 	"github.com/hxuu/ataree/internal/printer"
 )
 
-func Run(program *ebpf.Program, out printer.Printer) error {
+func Run(program *ebpf.Program, out printer.Printer, dets []detector.Detector) error {
 	if program == nil || program.Reader == nil {
 		return fmt.Errorf("program not initialized")
 	}
@@ -37,5 +38,15 @@ func Run(program *ebpf.Program, out printer.Printer) error {
 		}
 
 		out.Print(evt)
+		for _, det := range dets {
+			alert, err := det.OnEvent(evt)
+			if err != nil {
+				fmt.Printf("detector %s error: %v\n", det.Name(), err)
+				continue
+			}
+			if alert != nil {
+				out.PrintAlert(*alert)
+			}
+		}
 	}
 }

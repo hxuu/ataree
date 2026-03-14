@@ -27,13 +27,3 @@ type RawEvent struct {
     Arg2        uint64
 }
 
-// Alert is produced by the correlator.
-type Alert struct {
-    ActorPID   uint32
-    TargetPID  uint32
-    EventType  EventType
-    Evidence   []RawEvent
-    Message    string
-}
-
-

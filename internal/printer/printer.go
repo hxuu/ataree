@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/hxuu/ataree/internal/detector"
 	"github.com/hxuu/ataree/internal/ebpf"
 )
 
 type Printer interface {
 	Print(event ebpf.RawEvent)
+	PrintAlert(alert detector.Alert)
 }
 
 type Stdout struct{}
@@ -21,6 +23,15 @@ func (Stdout) Print(event ebpf.RawEvent) {
 		event.EventType,
 		event.Arg1,
 		event.Arg2,
+	)
+}
+
+func (Stdout) PrintAlert(a detector.Alert) {
+	fmt.Printf("[ALERT] detector=%s pid=%d event=%d msg=%s\n",
+		a.Detector,
+		a.Event.PID,
+		a.Event.EventType,
+		a.Message,
 	)
 }
 

@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/hxuu/ataree/internal/ebpf"
+	"github.com/hxuu/ataree/internal/detector"
 	"github.com/hxuu/ataree/internal/pipeline"
 	"github.com/hxuu/ataree/internal/printer"
 )
@@ -32,5 +33,13 @@ func Run() error {
 		_ = program.Close()
 	}()
 
-	return pipeline.Run(program, printer.Stdout{})
+	dets := []detector.Detector{
+		detector.NewPtraceWrite(),
+		detector.NewPtraceSetregs(),
+		detector.NewPtraceMprotect(),
+		detector.NewProcMemCorrel(),
+		detector.NewAnonExecMmap(),
+	}
+
+	return pipeline.Run(program, printer.Stdout{}, dets)
 }
