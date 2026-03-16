@@ -5,12 +5,9 @@ import (
 	"os"
 
 	"github.com/hxuu/ataree/internal/cli"
-<<<<<<< HEAD
-	"github.com/cilium/ebpf/link" // <--- Add this
+	"github.com/cilium/ebpf/link"
     "github.com/hxuu/ataree/internal/ebpf"
 
-=======
->>>>>>> ed35978 (read from ring buffer)
 )
 
 func main() {
