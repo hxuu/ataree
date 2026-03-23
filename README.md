@@ -102,3 +102,8 @@ By the time the malicious library is active, it can intercept and manipulate the
 ### Example Flow
 
 Suppose an attacker has root access to the victim machine (root access is needed, else no writing into the ld.so.preload is granted), the attacker can manipulate PAM_AUTHENTICATE() to return true, hence treating any password as correct, even if the user changes their password.
+
+
+> [!IMPORTANT]
+> the execve syscall isn't used when the programs use ld.so.preload, but openAt does, so we upgraded the ebpf to also monitor openAt.
+> After testing `sudo echo "/tmp/test.so" | sudo tee /etc/ld.so.preload`, run `sudo truncate -s 0 /etc/ld.so.preload` to reset ld.so.preload, not doing so will keep your machine running that library even after rebooting
