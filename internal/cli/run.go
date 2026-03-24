@@ -10,6 +10,7 @@ import (
 	"github.com/hxuu/ataree/internal/detector"
 	"github.com/hxuu/ataree/internal/pipeline"
 	"github.com/hxuu/ataree/internal/printer"
+	
 )
 
 func Run() error {
@@ -39,6 +40,10 @@ func Run() error {
 		detector.NewPtraceMprotect(),
 		detector.NewProcMemCorrel(),
 		detector.NewAnonExecMmap(),
+		detector.NewCronAccess(),
+	    detector.NewCronPersistence(),
+		detector.NewAtJobPersistence(),
+		detector.NewSystemdTimerPersistence(),
 	}
 
 	return pipeline.Run(program, printer.Stdout{}, dets)

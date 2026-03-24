@@ -104,35 +104,146 @@ int on_ptrace(struct trace_event_raw_sys_enter *ctx)
     return 0;
 }
 
+// Helper function to check if filename ends with .timer
+static __always_inline int ends_with_timer(const char *fn, int len)
+{
+    if (len < 6)
+        return 0;
+
+    int i = len - 6;
+
+    if (i < 0 || i + 5 >= 64)  // VERY IMPORTANT (bounds check)
+        return 0;
+
+    if (fn[i] != '.') return 0;
+    if (fn[i+1] != 't') return 0;
+    if (fn[i+2] != 'i') return 0;
+    if (fn[i+3] != 'm') return 0;
+    if (fn[i+4] != 'e') return 0;
+    if (fn[i+5] != 'r') return 0;
+
+    return 1;
+}
+
 SEC("tracepoint/syscalls/sys_enter_openat")
 int on_openat(struct trace_event_raw_sys_enter *ctx)
 {
     const char *filename = (const char *)ctx->args[1];
     char fn[64];
-    int len = bpf_probe_read_user_str(fn, sizeof(fn), filename);
-    if (len <= 0)
+    __builtin_memset(fn, 0, sizeof(fn));
+
+    int ret = bpf_probe_read_user_str(fn, sizeof(fn), filename);
+    if (ret <= 1)
         return 0;
 
-    __u32 target = 0; __u8 kind = 0;
-    // minimal, bounded parse: /proc/<pid>/(maps|mem)
-    if (len >= 12 && fn[0]=='/' && fn[1]=='p' && fn[2]=='r' && fn[3]=='o' && fn[4]=='c' && fn[5]=='/') {
-        int i; __u32 pid = 0;
-        for (i = 6; i < 24 && i < len; i++) {
-            char c = fn[i];
-            if (c >= '0' && c <= '9') { pid = pid*10 + (c - '0'); }
-            else break;
-        }
-        if (fn[i] == '/') {
-            if (i+4 < len && fn[i+1]=='m' && fn[i+2]=='a' && fn[i+3]=='p' && fn[i+4]=='s') {
-                target = pid; kind = EVENT_PROC_MAPS_OPEN;
-            } else if (i+3 < len && fn[i+1]=='m' && fn[i+2]=='e' && fn[i+3]=='m') {
-                target = pid; kind = EVENT_PROC_MEM_OPEN;
+    unsigned int len = (unsigned int)ret;
+
+    __u32 target = 0;
+    __u8 kind = 0;
+
+    // /proc/ paths - avoid loop, just check fixed known offsets
+    // We don't actually need to parse the PID for detection purposes
+    if (len >= 12 &&
+        fn[0]=='/' && fn[1]=='p' && fn[2]=='r' &&
+        fn[3]=='o' && fn[4]=='c' && fn[5]=='/') {
+
+        // Check for /proc/NNN/maps or /proc/NNN/mem
+        // Skip digits manually at fixed positions (pid < 7 digits)
+        // Check known fixed-offset suffixes instead of looping
+        // e.g. /proc/1/maps = 12 chars, /proc/12345/mem = 14 chars
+        // Strategy: scan known positions 7..18 for '/'
+        #pragma unroll
+        for (int k = 7; k <= 18; k++) {
+            if (fn[k] == '/') {
+                if (fn[k+1]=='m' && fn[k+2]=='a' &&
+                    fn[k+3]=='p' && fn[k+4]=='s') {
+                    kind = EVENT_PROC_MAPS_OPEN;
+                } else if (fn[k+1]=='m' && fn[k+2]=='e' &&
+                           fn[k+3]=='m' && fn[k+4]=='\0') {
+                    kind = EVENT_PROC_MEM_OPEN;
+                }
+                break;
             }
+        }
+        target = bpf_get_current_pid_tgid();
+    }
+
+    // /etc/cron*
+    if (kind == 0 && len >= 9 &&
+        fn[0]=='/' && fn[1]=='e' && fn[2]=='t' && fn[3]=='c' &&
+        fn[4]=='/' && fn[5]=='c' && fn[6]=='r' && fn[7]=='o' && fn[8]=='n') {
+        target = bpf_get_current_pid_tgid();
+        kind = EVENT_CRON_FILE_MOD;
+    }
+
+    // /var/spool/cron/atjobs/ or atspool/
+    if (kind == 0 && len >= 23 &&
+        fn[0]=='/' && fn[1]=='v' && fn[2]=='a' && fn[3]=='r' &&
+        fn[4]=='/' && fn[5]=='s' && fn[6]=='p' && fn[7]=='o' &&
+        fn[8]=='o' && fn[9]=='l' && fn[10]=='/' && fn[11]=='c' &&
+        fn[12]=='r' && fn[13]=='o' && fn[14]=='n' && fn[15]=='/') {
+        if ((fn[16]=='a' && fn[17]=='t' && fn[18]=='j' &&
+             fn[19]=='o' && fn[20]=='b' && fn[21]=='s' && fn[22]=='/') ||
+            (fn[16]=='a' && fn[17]=='t' && fn[18]=='s' &&
+             fn[19]=='p' && fn[20]=='o' && fn[21]=='o' &&
+             fn[22]=='l' && fn[23]=='/')) {
+            target = bpf_get_current_pid_tgid();
+            kind = EVENT_AT_FILE_MOD;
+        }
+    }
+
+    // /var/spool/at/
+    if (kind == 0 && len >= 14 &&
+        fn[0]=='/' && fn[1]=='v' && fn[2]=='a' && fn[3]=='r' &&
+        fn[4]=='/' && fn[5]=='s' && fn[6]=='p' && fn[7]=='o' &&
+        fn[8]=='o' && fn[9]=='l' && fn[10]=='/' && fn[11]=='a' &&
+        fn[12]=='t' && fn[13]=='/') {
+        target = bpf_get_current_pid_tgid();
+        kind = EVENT_AT_FILE_MOD;
+    }
+
+    // /etc/systemd/system/*.timer
+    if (kind == 0 && len >= 20 &&
+        fn[0]=='/' && fn[1]=='e' && fn[2]=='t' && fn[3]=='c' &&
+        fn[4]=='/' && fn[5]=='s' && fn[6]=='y' && fn[7]=='s' &&
+        fn[8]=='t' && fn[9]=='e' && fn[10]=='m' && fn[11]=='d' &&
+        fn[12]=='/' && fn[13]=='s' && fn[14]=='y' && fn[15]=='s' &&
+        fn[16]=='t' && fn[17]=='e' && fn[18]=='m' && fn[19]=='/') {
+        if (ends_with_timer(fn, len)) {
+            target = bpf_get_current_pid_tgid();
+            kind = EVENT_CRON_FILE_MOD;
+        }
+    }
+
+    // /lib/systemd/system/*.timer
+    if (kind == 0 && len >= 20 &&
+        fn[0]=='/' && fn[1]=='l' && fn[2]=='i' && fn[3]=='b' &&
+        fn[4]=='/' && fn[5]=='s' && fn[6]=='y' && fn[7]=='s' &&
+        fn[8]=='t' && fn[9]=='e' && fn[10]=='m' && fn[11]=='d' &&
+        fn[12]=='/' && fn[13]=='s' && fn[14]=='y' && fn[15]=='s' &&
+        fn[16]=='t' && fn[17]=='e' && fn[18]=='m' && fn[19]=='/') {
+        if (ends_with_timer(fn, len)) {
+            target = bpf_get_current_pid_tgid();
+            kind = EVENT_CRON_FILE_MOD;
+        }
+    }
+
+    // /usr/lib/systemd/system/*.timer
+    if (kind == 0 && len >= 24 &&
+        fn[0]=='/' && fn[1]=='u' && fn[2]=='s' && fn[3]=='r' &&
+        fn[4]=='/' && fn[5]=='l' && fn[6]=='i' && fn[7]=='b' &&
+        fn[8]=='/' && fn[9]=='s' && fn[10]=='y' && fn[11]=='s' &&
+        fn[12]=='t' && fn[13]=='e' && fn[14]=='m' && fn[15]=='d' &&
+        fn[16]=='/' && fn[17]=='s' && fn[18]=='y' && fn[19]=='s' &&
+        fn[20]=='t' && fn[21]=='e' && fn[22]=='m' && fn[23]=='/') {
+        if (ends_with_timer(fn, len)) {
+            target = bpf_get_current_pid_tgid();
+            kind = EVENT_CRON_FILE_MOD;
         }
     }
 
     if (kind == 0)
-        return 0; // ignore non-proc targets
+        return 0;
 
     struct t1055_event *e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
     if (!e) return 0;
@@ -175,4 +286,5 @@ int on_mprotect(struct trace_event_raw_sys_enter *ctx)
 }
 
 char LICENSE[] SEC("license") = "GPL";
+
 

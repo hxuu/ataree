@@ -10,6 +10,8 @@
 #define EVENT_SO_LOAD 5
 #define EVENT_ANON_EXEC_MMAP 6
 #define EVENT_MPROTECT_EXEC 7
+#define EVENT_CRON_FILE_MOD 8
+#define EVENT_AT_FILE_MOD 9 
 
 struct t1055_event {
     __u64 timestamp_ns;

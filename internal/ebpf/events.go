@@ -11,6 +11,8 @@ const (
     EventSoLoad         EventType = 5
     EventAnonExecMmap   EventType = 6
     EventMprotectExec   EventType = 7
+    EventAtFileMod      EventType = 9
+    EventCronFileMod    EventType = 8
 )
 
 // RawEvent is emitted from BPF ring buffer.
