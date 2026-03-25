@@ -37,7 +37,6 @@ func Run(program *ebpf.Program, out printer.Printer, dets []detector.Detector) e
 			continue
 		}
 
-		// Run every detector. Only print the raw event when at least one (filtering printed output)
 		for _, det := range dets {
 			alert, err := det.OnEvent(evt)
 			if err != nil {

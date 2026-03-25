@@ -41,6 +41,11 @@ func Run() error {
 		detector.NewPkgDowngrade(),
 		detector.NewSyslogSpoof(),
 		detector.NewAuditDisable(),
+		detector.NewPtraceWrite(),
+		detector.NewPtraceSetregs(),
+		detector.NewPtraceMprotect(),
+		detector.NewProcMemCorrel(),
+		detector.NewAnonExecMmap(),
 	}
 
 	return pipeline.Run(program, printer.Stdout{}, dets)

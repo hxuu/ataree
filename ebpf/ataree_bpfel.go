@@ -64,7 +64,10 @@ type AtareeProgramSpecs struct {
 	HandleFork *ebpf.ProgramSpec `ebpf:"handle_fork"`
 	OnExecve   *ebpf.ProgramSpec `ebpf:"on_execve"`
 	OnKill     *ebpf.ProgramSpec `ebpf:"on_kill"`
+	OnMmap     *ebpf.ProgramSpec `ebpf:"on_mmap"`
+	OnMprotect *ebpf.ProgramSpec `ebpf:"on_mprotect"`
 	OnOpenat   *ebpf.ProgramSpec `ebpf:"on_openat"`
+	OnPtrace   *ebpf.ProgramSpec `ebpf:"on_ptrace"`
 	OnUnlink   *ebpf.ProgramSpec `ebpf:"on_unlink"`
 	OnUnlinkat *ebpf.ProgramSpec `ebpf:"on_unlinkat"`
 }
@@ -128,7 +131,10 @@ type AtareePrograms struct {
 	HandleFork *ebpf.Program `ebpf:"handle_fork"`
 	OnExecve   *ebpf.Program `ebpf:"on_execve"`
 	OnKill     *ebpf.Program `ebpf:"on_kill"`
+	OnMmap     *ebpf.Program `ebpf:"on_mmap"`
+	OnMprotect *ebpf.Program `ebpf:"on_mprotect"`
 	OnOpenat   *ebpf.Program `ebpf:"on_openat"`
+	OnPtrace   *ebpf.Program `ebpf:"on_ptrace"`
 	OnUnlink   *ebpf.Program `ebpf:"on_unlink"`
 	OnUnlinkat *ebpf.Program `ebpf:"on_unlinkat"`
 }
@@ -139,7 +145,10 @@ func (p *AtareePrograms) Close() error {
 		p.HandleFork,
 		p.OnExecve,
 		p.OnKill,
+		p.OnMmap,
+		p.OnMprotect,
 		p.OnOpenat,
+		p.OnPtrace,
 		p.OnUnlink,
 		p.OnUnlinkat,
 	)

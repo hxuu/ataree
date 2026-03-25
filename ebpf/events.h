@@ -3,13 +3,19 @@
 
 #include <linux/types.h>
 
+#define EVENT_PTRACE_WRITE 1
+#define EVENT_PTRACE_SETREGS 2
+#define EVENT_PROC_MEM_OPEN 3
+#define EVENT_PROC_MAPS_OPEN 4
+#define EVENT_SO_LOAD 5
+#define EVENT_ANON_EXEC_MMAP 6
+#define EVENT_MPROTECT_EXEC 7
 #define EVENT_KILL_SIGNAL 8
 #define EVENT_UNLINK_PATH 9
 #define EVENT_EXECVE_CMD 10
 #define EVENT_SENSITIVE_WRITE 11
 
-struct ataree_event
-{
+struct ataree_event {
     __u64 timestamp_ns;
     __u32 pid;
     __u32 ppid;

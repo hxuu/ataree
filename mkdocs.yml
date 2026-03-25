@@ -23,6 +23,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Detectors: detectors.md
   # - Architecture: architecture.md
   # - eBPF Design: ebpf-design.md
   # - CLI: cli.md

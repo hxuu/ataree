@@ -3,6 +3,13 @@ package ebpf
 type EventType uint8
 
 const (
+	EventPtraceWrite    EventType = 1
+	EventPtraceSetregs  EventType = 2
+	EventProcMemOpen    EventType = 3
+	EventProcMapsOpen   EventType = 4
+	EventSoLoad         EventType = 5
+	EventAnonExecMmap   EventType = 6
+	EventMprotectExec   EventType = 7
 	EventKillSignal     EventType = 8
 	EventUnlinkPath     EventType = 9
 	EventExecveCmd      EventType = 10

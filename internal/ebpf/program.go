@@ -29,13 +29,16 @@ func LoadAndAttach() (*Program, error) {
 		cat, name string
 		prog      *cilium.Program
 	}{
+		{"syscalls", "sys_enter_ptrace", objs.OnPtrace},
+		{"syscalls", "sys_enter_openat", objs.OnOpenat},
+		{"syscalls", "sys_enter_mmap", objs.OnMmap},
+		{"syscalls", "sys_enter_mprotect", objs.OnMprotect},
 		{"sched", "sched_process_fork", objs.HandleFork},
 		{"sched", "sched_process_exit", objs.HandleExit},
 		{"syscalls", "sys_enter_kill", objs.OnKill},
 		{"syscalls", "sys_enter_unlink", objs.OnUnlink},
 		{"syscalls", "sys_enter_unlinkat", objs.OnUnlinkat},
 		{"syscalls", "sys_enter_execve", objs.OnExecve},
-		{"syscalls", "sys_enter_openat", objs.OnOpenat},
 	}
 
 	var links []link.Link
