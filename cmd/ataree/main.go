@@ -5,9 +5,6 @@ import (
 	"os"
 
 	"github.com/hxuu/ataree/internal/cli"
-	"github.com/cilium/ebpf/link"
-    "github.com/hxuu/ataree/internal/ebpf"
-
 )
 
 func main() {

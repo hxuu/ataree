@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/hxuu/ataree/internal/detector"
 	"github.com/hxuu/ataree/internal/ebpf"
 	"github.com/hxuu/ataree/internal/pipeline"
 	"github.com/hxuu/ataree/internal/printer"
@@ -32,5 +33,15 @@ func Run() error {
 		_ = program.Close()
 	}()
 
-	return pipeline.Run(program, printer.Stdout{})
+	dets := []detector.Detector{
+		detector.NewKillTool(),
+		detector.NewHistoryTamper(),
+		detector.NewFirewallDisable(),
+		detector.NewIndicatorBlocking(),
+		detector.NewPkgDowngrade(),
+		detector.NewSyslogSpoof(),
+		detector.NewAuditDisable(),
+	}
+
+	return pipeline.Run(program, printer.Stdout{}, dets)
 }
