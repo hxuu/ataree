@@ -107,3 +107,12 @@ Suppose an attacker has root access to the victim machine (root access is needed
 > [!IMPORTANT]
 > the execve syscall isn't used when the programs use ld.so.preload, but openAt does, so we upgraded the ebpf to also monitor openAt.
 > After testing `sudo echo "/tmp/test.so" | sudo tee /etc/ld.so.preload`, run `sudo truncate -s 0 /etc/ld.so.preload` to reset ld.so.preload, not doing so will keep your machine running that library even after rebooting
+
+
+> [!NOTE]
+> Since users can load their shared libs to ld.so.preload, we upgrade to detector to inpect what the library calls, a legitimate library usually uses stuff like `stat`, `open`... a malicious one however imports more like `socket`, `ptrace`, `system`... Also, we inspect the hash of the .so file, if it matches the known hashes, then we don't flag it.
+> The flow goes as follows:
+> 1.Something loads to ld.so.preload or LD_PRELOAD
+> 2.we check the hash, if it's known, we don't flag it, else we move to step 3
+> 3.We scan the imports, if it imports suspicious functions then we flag it along with the function called, else we let it go through
+
