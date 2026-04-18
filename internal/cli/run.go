@@ -6,11 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/hxuu/ataree/internal/ebpf"
 	"github.com/hxuu/ataree/internal/detector"
+	"github.com/hxuu/ataree/internal/ebpf"
 	"github.com/hxuu/ataree/internal/pipeline"
 	"github.com/hxuu/ataree/internal/printer"
-	
 )
 
 func Run() error {
@@ -41,9 +40,11 @@ func Run() error {
 		detector.NewProcMemCorrel(),
 		detector.NewAnonExecMmap(),
 		detector.NewCronAccess(),
-	    detector.NewCronPersistence(),
+		detector.NewCronPersistence(),
 		detector.NewAtJobPersistence(),
 		detector.NewSystemdTimerPersistence(),
+		detector.NewSudoersAbuse(),
+		detector.NewCredentialAccess(),
 	}
 
 	return pipeline.Run(program, printer.Stdout{}, dets)
